@@ -30,6 +30,31 @@ jobs:
       - name: Install build dependencies
         run: python -m pip install --upgrade pip build
 
+      - name: Bump package version
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+
+          pyproject_path = Path("pyproject.toml")
+          text = pyproject_path.read_text(encoding="utf-8")
+          match = re.search(r'^version\s*=\s*"(\d+(?:\.\d+)*)"$', text, re.MULTILINE)
+
+          if not match:
+              raise RuntimeError("Unable to find [project].version in pyproject.toml")
+
+          current_version = match.group(1)
+          parts = current_version.split(".")
+          parts[-1] = str(int(parts[-1]) + 1)
+          next_version = ".".join(parts)
+
+          pyproject_path.write_text(
+              text.replace(f'version = "{current_version}"', f'version = "{next_version}"', 1),
+              encoding="utf-8",
+          )
+          print(f"Bumped version: {current_version} -> {next_version}")
+          PY
+
       - name: Build package
         run: python -m build
 
