@@ -1,12 +1,71 @@
+# Bytecode and runtime caches
 __pycache__/
 *.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+
+# Virtual environments
 .venv/
-*.egg-info/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Packaging and distribution
 dist/
 build/
+*.egg-info/
 .eggs/
+*.egg
+*.manifest
+*.spec
 
-# Data files (not shipped in git)
+# Test coverage
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# Environment and secrets
+.env
+.env.*
+*.env
+!.env.example
+.dev.vars
+
+# Node / Frontend (dashboard)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.output/
+.wrangler/
+.nitro/
+.vinxi/
+.tanstack/
+
+# Model weights and large ML artifacts
+*.gguf
+*.bin
+*.pt
+*.pth
+*.onnx
+*.safetensors
+
+# Embeddings and data caches
+*.npz
+*.pkl
+*.pickle
+*.parquet
+*.feather
+router/*.npz
+router/*.tmp.npz
 data/model_embeddings_*.npz
 data/routerbench_raw.csv
 data/routerbench_raw.pkl
@@ -15,13 +74,35 @@ data/benchmark_models_embeddings_qwen3_0.6b.npz
 data/mbpp_benchmark_*.csv
 data/routerbench_raw_mbpp.csv
 
-# Paper / evaluation
+# Evaluation outputs and documentation artifacts
 paper/
 evaluation/
-
-# Environment
-.env
 *.pdf
 *.png
 *.csv
+
+# Logs and databases
+*.log
+logs/
+*.sqlite
+*.sqlite3
+*.db
+
+# Operating System files
 .DS_Store
+.DS_Store?
+._*
+.AppleDouble
+.LSOverride
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE and editor files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~

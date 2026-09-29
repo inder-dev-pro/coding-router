@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import time
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -16,6 +17,7 @@ except ImportError:
     pass
 
 from .router import CodingRouter, RouterConfig, MODE_WEIGHTS
+from .dashboard import DashboardServer, get_tracker
 from .catalog import add_user_model
 from .config import (
     SERVICE_ENV_MAP,
@@ -401,6 +403,7 @@ def route_command(arguments: list[str]) -> int:
     if not args.query:
         parser.error("query is required unless --build-index is used")
 
+    t0 = time.perf_counter()
     result = router.route(
         args.query,
         route_only=args.route_only,
@@ -411,6 +414,13 @@ def route_command(arguments: list[str]) -> int:
         quality_gap_threshold=args.quality_gap_threshold,
         estimated_output_tokens=args.max_output_tokens,
     )
+    latency_ms = (time.perf_counter() - t0) * 1000
+
+    # Record the event to the local SQLite database for the dashboard.
+    try:
+        get_tracker().record(result, latency_ms)
+    except Exception:
+        pass  # never let dashboard tracking break a routing call
 
     selected = result["selected_model"]
     output: dict[str, object] = {
@@ -435,6 +445,186 @@ def route_command(arguments: list[str]) -> int:
 
 
 # ---------------------------------------------------------------------------
+# Subcommand: dashboard
+# ---------------------------------------------------------------------------
+
+
+def dashboard_command(arguments: list[str]) -> int:
+    """Start the dashboard API server so the web UI can display live metrics."""
+    parser = argparse.ArgumentParser(
+        prog="coding-router dashboard",
+        description="Start the dashboard API server for the web UI.",
+    )
+    parser.add_argument(
+        "--host", default="127.0.0.1", help="Bind address (default: 127.0.0.1)"
+    )
+    parser.add_argument(
+        "--port", type=int, default=3000, help="Port (default: 3000)"
+    )
+    args = parser.parse_args(arguments)
+
+    server = DashboardServer(host=args.host, port=args.port)
+    url = server.start()
+    print(f"  ✓ Dashboard API running at {url}")
+    print(f"    Open http://localhost:8080 in your browser to view the dashboard.")
+    print(f"    Press Ctrl+C to stop.")
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("\n  Stopping dashboard server…")
+        server.stop()
+    return 0
+
+
+# ---------------------------------------------------------------------------
+# Subcommand: serve (LLM Gateway)
+# ---------------------------------------------------------------------------
+
+
+def serve_command(arguments: list[str]) -> int:
+    """Start the OpenAI/Anthropic-compatible LLM gateway."""
+    parser = argparse.ArgumentParser(
+        prog="coding-router serve",
+        description="Start the local LLM gateway (OpenAI + Anthropic compatible).",
+    )
+    parser.add_argument("--host", default="127.0.0.1", help="Bind address (default: 127.0.0.1)")
+    parser.add_argument("--port", type=int, default=8080, help="Port (default: 8080)")
+    parser.add_argument("--no-auth", action="store_true", help="Disable gateway authentication")
+    parser.add_argument("--log-level", default="info", choices=("debug", "info", "warning", "error"))
+    args = parser.parse_args(arguments)
+
+    import logging
+    logging.basicConfig(
+        level=getattr(logging, args.log_level.upper()),
+        format="%(asctime)s  %(name)s  %(levelname)s  %(message)s",
+        datefmt="%H:%M:%S",
+    )
+
+    if args.no_auth:
+        import os
+        os.environ["CODING_ROUTER_AUTH"] = "false"
+
+    print()
+    print("  ╔══════════════════════════════════════════════════════════════╗")
+    print("  ║               coding-router  ·  LLM Gateway                ║")
+    print("  ╚══════════════════════════════════════════════════════════════╝")
+    print()
+    print(f"  Gateway URL:  http://{args.host}:{args.port}")
+    print()
+    print("  Endpoints:")
+    print("    POST /v1/chat/completions   (OpenAI Chat)")
+    print("    POST /v1/responses          (OpenAI Responses)")
+    print("    POST /v1/messages           (Anthropic Messages)")
+    print("    GET  /v1/models             (Model listing)")
+    print("    GET  /health                (Health check)")
+    print()
+
+    if not args.no_auth:
+        from .gateway.auth import load_or_create_key
+        key = load_or_create_key()
+        # Show only first 12 chars
+        print(f"  API Key:      {key[:12]}...  (set CODING_ROUTER_API_KEY or see ~/.config/coding-router/gateway.key)")
+    else:
+        print("  API Key:      DISABLED (--no-auth)")
+
+    print(f"  Virtual model: coding-router")
+    print()
+    print("  Press Ctrl+C to stop.")
+    print()
+
+    import uvicorn
+    from .gateway.server import create_app
+    app = create_app()
+    uvicorn.run(app, host=args.host, port=args.port, log_level=args.log_level)
+    return 0
+
+
+# ---------------------------------------------------------------------------
+# Subcommand: doctor
+# ---------------------------------------------------------------------------
+
+
+def doctor_command(arguments: list[str]) -> int:
+    """Validate gateway configuration, router, and provider keys."""
+    parser = argparse.ArgumentParser(
+        prog="coding-router doctor",
+        description="Diagnose gateway configuration and readiness.",
+    )
+    parser.add_argument("--catalog", type=Path, default=None)
+    parser.parse_args(arguments)
+
+    import os
+    print()
+    print("  coding-router doctor")
+    print("  " + "─" * 50)
+    errors = 0
+
+    # 1. Catalog
+    try:
+        catalog_path = resolve_catalog_path()
+        print(f"  ✓ Model catalog: {catalog_path}")
+    except FileNotFoundError as e:
+        print(f"  ✗ Model catalog: {e}")
+        errors += 1
+
+    # 2. Gateway key
+    from .gateway.auth import load_or_create_key
+    try:
+        key = load_or_create_key()
+        print(f"  ✓ Gateway API key: {key[:12]}...")
+    except Exception as e:
+        print(f"  ✗ Gateway API key: {e}")
+        errors += 1
+
+    # 3. Provider keys
+    for service, env_var in [
+        ("OpenAI", "OPENAI_API_KEY"),
+        ("Anthropic", "ANTHROPIC_API_KEY"),
+        ("Google", "GOOGLE_API_KEY"),
+        ("DeepSeek", "DEEPSEEK_API_KEY"),
+        ("xAI", "XAI_API_KEY"),
+        ("Mistral AI", "MISTRAL_API_KEY"),
+    ]:
+        val = os.environ.get(env_var)
+        if val:
+            print(f"  ✓ {service}: {env_var} set")
+        else:
+            print(f"  ⚠ {service}: {env_var} not set")
+
+    # 4. Router initialization
+    print()
+    print("  Testing router initialization...")
+    try:
+        from .router import CodingRouter
+        router = CodingRouter()
+        print(f"  ✓ Router ready: {len(router.profiles)} models in catalog")
+        print(f"  ✓ Embedding index: loaded")
+        print(f"  ✓ Classifier: loaded")
+    except Exception as e:
+        print(f"  ✗ Router initialization failed: {e}")
+        errors += 1
+
+    # 5. Dependencies
+    print()
+    for dep, package in [("fastapi", "fastapi"), ("uvicorn", "uvicorn"), ("httpx", "httpx")]:
+        try:
+            __import__(package)
+            print(f"  ✓ {dep}: installed")
+        except ImportError:
+            print(f"  ✗ {dep}: NOT installed (pip install {dep})")
+            errors += 1
+
+    print()
+    if errors:
+        print(f"  ⚠ {errors} issue(s) found. Fix them before running 'coding-router serve'.")
+    else:
+        print("  ✓ All checks passed! Run 'coding-router serve' to start the gateway.")
+    print()
+    return 1 if errors else 0
+
+
+# ---------------------------------------------------------------------------
 # Main dispatcher
 # ---------------------------------------------------------------------------
 
@@ -444,6 +634,9 @@ SUBCOMMANDS = {
     "validate": validate_command,
     "models": models_command,
     "add-model": add_model_command,
+    "dashboard": dashboard_command,
+    "serve": serve_command,
+    "doctor": doctor_command,
 }
 
 

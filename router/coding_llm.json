@@ -1,0 +1,395 @@
+{
+  "cloud_coding_models": {
+    "gpt-5.6-sol": {
+      "size": "Undisclosed (flagship)",
+      "feature": "GPT-5.6 Sol is OpenAI's flagship reasoning and coding model, used as the top-tier option in GitHub Copilot, Codex CLI/ChatGPT Work, and Cursor. It supports a 400K context window with max-effort and 'ultra' parallel-agent reasoning modes for long-horizon coding tasks. Official API pricing is $5.00 per million input tokens and $30.00 per million output tokens.",
+      "input_price": 5.0,
+      "output_price": 30.0,
+      "model": "gpt-5.6-sol",
+      "service": "OpenAI",
+      "api_endpoint": "https://api.openai.com/v1",
+      "used_in": [
+        "GitHub Copilot",
+        "OpenAI Codex CLI / ChatGPT Work",
+        "Cursor"
+      ]
+    },
+    "gpt-5.6-terra": {
+      "size": "Undisclosed (mid-tier)",
+      "feature": "GPT-5.6 Terra is OpenAI's balanced production tier, pitched as competitive with the prior GPT-5.5 flagship at roughly half the cost. It's the default 'everyday' coding model in Copilot and Codex for teams that don't need Sol's maximum reasoning depth. Official API pricing is $2.00 per million input tokens and $12.00 per million output tokens.",
+      "input_price": 2.0,
+      "output_price": 12.0,
+      "model": "gpt-5.6-terra",
+      "service": "OpenAI",
+      "api_endpoint": "https://api.openai.com/v1",
+      "used_in": [
+        "GitHub Copilot",
+        "OpenAI Codex CLI / ChatGPT Work"
+      ]
+    },
+    "gpt-5.1-codex": {
+      "size": "Undisclosed (coding-specialized)",
+      "feature": "GPT-5.1 Codex is OpenAI's coding-specialized model tuned for agentic software engineering, with a 400K context window and strong SWE-bench performance. It remains widely used in Codex CLI, Codex extensions, and third-party IDE integrations that pin to the Codex line. Official API pricing is $1.25 per million input tokens and $10.00 per million output tokens.",
+      "input_price": 1.25,
+      "output_price": 10.0,
+      "model": "gpt-5.1-codex",
+      "service": "OpenAI",
+      "api_endpoint": "https://api.openai.com/v1",
+      "used_in": [
+        "OpenAI Codex CLI",
+        "GitHub Copilot (Codex mode)"
+      ]
+    },
+    "claude-opus-5": {
+      "size": "Undisclosed (flagship)",
+      "feature": "Claude Opus 5 is Anthropic's top-tier model for complex, long-horizon coding and agentic work, with a 1M-token context window. It's the model most Claude Code power users reach for on hard refactors, multi-file changes, and planning-heavy tasks. Official API pricing is $5.00 per million input tokens and $25.00 per million output tokens.",
+      "input_price": 5.0,
+      "output_price": 25.0,
+      "model": "claude-opus-5",
+      "service": "Anthropic",
+      "api_endpoint": "https://api.anthropic.com/v1",
+      "used_in": [
+        "Claude Code",
+        "Cursor",
+        "GitHub Copilot",
+        "Windsurf"
+      ]
+    },
+    "claude-sonnet-5": {
+      "size": "Undisclosed (mid-tier)",
+      "feature": "Claude Sonnet 5 is Anthropic's production workhorse and the default model behind most day-to-day Claude Code sessions, balancing coding quality, speed, and cost. It carries a 1M-token context window in beta. Official API pricing is $2.00 per million input tokens and $10.00 per million output tokens.",
+      "input_price": 2.0,
+      "output_price": 10.0,
+      "model": "claude-sonnet-5",
+      "service": "Anthropic",
+      "api_endpoint": "https://api.anthropic.com/v1",
+      "used_in": [
+        "Claude Code",
+        "Cursor",
+        "GitHub Copilot",
+        "Windsurf",
+        "Cline"
+      ]
+    },
+    "claude-haiku-4.5": {
+      "size": "Undisclosed (fast/budget)",
+      "feature": "Claude Haiku 4.5 is Anthropic's fast, low-cost tier, used for quick edits, autocomplete-style suggestions, and high-volume agent sub-tasks where Opus- or Sonnet-level reasoning isn't required. Official API pricing is $1.00 per million input tokens and $5.00 per million output tokens.",
+      "input_price": 1.0,
+      "output_price": 5.0,
+      "model": "claude-haiku-4-5-20251001",
+      "service": "Anthropic",
+      "api_endpoint": "https://api.anthropic.com/v1",
+      "used_in": [
+        "Claude Code",
+        "Cursor",
+        "GitHub Copilot"
+      ]
+    },
+    "gemini-3-pro": {
+      "size": "Undisclosed (flagship)",
+      "feature": "Gemini 3 Pro is Google's frontier reasoning and coding model with a 1M-token context window, used inside Google's Antigravity IDE, Gemini Code Assist, and as a selectable model in Cursor and other multi-model editors. Official API pricing is $2.00 per million input tokens and $12.00 per million output tokens (rates roughly double above 200K input tokens).",
+      "input_price": 2.0,
+      "output_price": 12.0,
+      "model": "gemini-3-pro-preview",
+      "service": "Google",
+      "api_endpoint": "https://generativelanguage.googleapis.com/v1beta",
+      "used_in": [
+        "Google Antigravity",
+        "Gemini Code Assist",
+        "Cursor"
+      ]
+    },
+    "gemini-3.5-flash": {
+      "size": "Undisclosed (fast/budget)",
+      "feature": "Gemini 3.5 Flash is Google's fast, cost-efficient model for high-volume coding completions and chat, trading some reasoning depth for speed and price. Official API pricing is $1.50 per million input tokens and $9.00 per million output tokens.",
+      "input_price": 1.5,
+      "output_price": 9.0,
+      "model": "gemini-3.5-flash",
+      "service": "Google",
+      "api_endpoint": "https://generativelanguage.googleapis.com/v1beta",
+      "used_in": [
+        "Gemini Code Assist",
+        "Google Antigravity"
+      ]
+    },
+    "grok-code-fast-1": {
+      "size": "Undisclosed (coding-specialized)",
+      "feature": "Grok Code Fast 1 is xAI's coding-specialized model, tuned for fast agentic coding loops with a 256K context window. It's offered as a free/discounted preview model inside several editors and is popular for its speed-to-cost ratio. Official API pricing is $0.20 per million input tokens and $1.50 per million output tokens.",
+      "input_price": 0.2,
+      "output_price": 1.5,
+      "model": "grok-code-fast-1",
+      "service": "xAI",
+      "api_endpoint": "https://api.x.ai/v1",
+      "used_in": [
+        "GitHub Copilot",
+        "Cursor",
+        "Cline",
+        "opencode"
+      ]
+    },
+    "deepseek-v3.2": {
+      "size": "671B MoE (37B activated)",
+      "feature": "DeepSeek-V3.2 is DeepSeek's flagship Mixture-of-Experts model, MIT-licensed and available both as a cheap hosted API and as open weights for self-hosting. It's a favorite budget backend in Cline, Continue, and other bring-your-own-key coding tools. Official API pricing is $0.27 per million input tokens and $0.40 per million output tokens.",
+      "input_price": 0.27,
+      "output_price": 0.4,
+      "model": "deepseek-chat",
+      "service": "DeepSeek",
+      "api_endpoint": "https://api.deepseek.com/v1",
+      "used_in": [
+        "Cline",
+        "Continue.dev",
+        "Roo Code",
+        "Aider"
+      ]
+    },
+    "qwen3-coder-plus": {
+      "size": "480B MoE (flagship coding tier)",
+      "feature": "Qwen3-Coder-Plus is Alibaba's hosted flagship coding model, built for agentic, multi-file software engineering with a 1M-token context window. It powers the official Qwen Code CLI and is a common backend choice in Cline and Kilo Code. Official API pricing is $0.65 per million input tokens and $3.25 per million output tokens.",
+      "input_price": 0.65,
+      "output_price": 3.25,
+      "model": "qwen3-coder-plus",
+      "service": "Alibaba Cloud (Qwen)",
+      "api_endpoint": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+      "used_in": [
+        "Qwen Code CLI",
+        "Cline",
+        "Kilo Code"
+      ]
+    },
+    "codestral-2508": {
+      "size": "22B (coding-specialized)",
+      "feature": "Codestral is Mistral AI's dedicated code-generation model, supporting 80+ programming languages with a 256K context window and low latency for in-editor completion. It's integrated directly into JetBrains AI, Continue.dev, and Tabnine. Official API pricing is $0.30 per million input tokens and $0.90 per million output tokens.",
+      "input_price": 0.3,
+      "output_price": 0.9,
+      "model": "codestral-2508",
+      "service": "Mistral AI",
+      "api_endpoint": "https://api.mistral.ai/v1",
+      "used_in": [
+        "Continue.dev",
+        "JetBrains AI Assistant",
+        "Tabnine"
+      ]
+    },
+    "glm-4.6": {
+      "size": "335B MoE (32B activated)",
+      "feature": "GLM-4.6 is Zhipu/Z.ai's open-weight (MIT) agentic coding model, widely used as a cheap drop-in backend for Claude Code (via proxy), Cline, and Roo Code thanks to strong tool-use and a 200K context window. Official API pricing is $0.39 per million input tokens and $1.90 per million output tokens.",
+      "input_price": 0.39,
+      "output_price": 1.9,
+      "model": "glm-4.6",
+      "service": "Z.ai (Zhipu)",
+      "api_endpoint": "https://api.z.ai/api/paas/v4",
+      "used_in": [
+        "Claude Code (proxied)",
+        "Cline",
+        "Roo Code",
+        "Kilo Code"
+      ]
+    },
+    "kimi-k2": {
+      "size": "1T MoE (32B activated)",
+      "feature": "Kimi K2 is Moonshot AI's large open-weight (Modified MIT) MoE model, tuned for agentic tool-use and long coding sessions with up to a 262K context window. It's popular as a cost-effective, high-context backend in Kilo Code and Cline. Official API pricing is $0.58 per million input tokens and $2.29 per million output tokens.",
+      "input_price": 0.58,
+      "output_price": 2.29,
+      "model": "kimi-k2-0905-preview",
+      "service": "Moonshot AI",
+      "api_endpoint": "https://api.moonshot.ai/v1",
+      "used_in": [
+        "Kilo Code",
+        "Cline",
+        "Roo Code"
+      ]
+    },
+    "minimax-m2": {
+      "size": "230B MoE (10B activated)",
+      "feature": "MiniMax-M2 is MiniMax's open-weight agentic coding model with a 1M-token context window, positioned as a low-cost, high-throughput option for automated coding agents and CI-style workflows. Official API pricing is $0.30 per million input tokens and $1.20 per million output tokens.",
+      "input_price": 0.3,
+      "output_price": 1.2,
+      "model": "MiniMax-M2",
+      "service": "MiniMax",
+      "api_endpoint": "https://api.minimax.io/v1",
+      "used_in": [
+        "Cline",
+        "Kilo Code",
+        "Roo Code"
+      ]
+    }
+  },
+  "open_source_self_hosted_models": {
+    "qwen2.5-coder-32b": {
+      "size": "32B",
+      "feature": "Qwen2.5-Coder-32B-Instruct is the largest model in Alibaba's Apache-2.0-licensed coding family and remains one of the strongest fully local coding models available, scoring competitively with much larger hosted models on HumanEval. It needs roughly 22GB VRAM at Q4 quantization.",
+      "input_price": 0.0,
+      "output_price": 0.0,
+      "model": "qwen2.5-coder:32b",
+      "service": "Self-hosted (Ollama / vLLM)",
+      "api_endpoint": "http://localhost:11434/v1",
+      "used_in": [
+        "Ollama",
+        "vLLM",
+        "Continue.dev (local)",
+        "Tabby"
+      ]
+    },
+    "qwen2.5-coder-14b": {
+      "size": "14B",
+      "feature": "Qwen2.5-Coder-14B-Instruct is the mid-size option in the Qwen2.5-Coder family, offering a good balance of coding quality and hardware requirements (around 13GB VRAM at Q5). It's a common pick for 16GB-class consumer GPUs.",
+      "input_price": 0.0,
+      "output_price": 0.0,
+      "model": "qwen2.5-coder:14b",
+      "service": "Self-hosted (Ollama / vLLM)",
+      "api_endpoint": "http://localhost:11434/v1",
+      "used_in": [
+        "Ollama",
+        "vLLM",
+        "Continue.dev (local)"
+      ]
+    },
+    "qwen2.5-coder-7b": {
+      "size": "7B",
+      "feature": "Qwen2.5-Coder-7B-Instruct is the lightweight entry point into the Qwen2.5-Coder family, runnable on around 8-10GB VRAM, making it a popular choice for laptop-class local coding assistants and autocomplete.",
+      "input_price": 0.0,
+      "output_price": 0.0,
+      "model": "qwen2.5-coder:7b",
+      "service": "Self-hosted (Ollama / vLLM)",
+      "api_endpoint": "http://localhost:11434/v1",
+      "used_in": [
+        "Ollama",
+        "vLLM",
+        "Continue.dev (local)"
+      ]
+    },
+    "qwen3-coder-30b-a3b": {
+      "size": "30B MoE (3B activated)",
+      "feature": "Qwen3-Coder-30B-A3B-Instruct is a sparse Mixture-of-Experts coding model that only activates ~3B parameters per token, giving near-dense-32B coding quality at a fraction of the inference cost, and runs comfortably on a single consumer GPU.",
+      "input_price": 0.0,
+      "output_price": 0.0,
+      "model": "qwen3-coder:30b",
+      "service": "Self-hosted (Ollama / vLLM)",
+      "api_endpoint": "http://localhost:11434/v1",
+      "used_in": [
+        "Ollama",
+        "vLLM",
+        "opencode (local)"
+      ]
+    },
+    "deepseek-r1-distill-qwen-32b": {
+      "size": "32B (distilled)",
+      "feature": "DeepSeek-R1-Distill-Qwen-32B distills DeepSeek-R1's chain-of-thought reasoning into a Qwen2.5-32B base, giving strong step-by-step debugging and algorithmic reasoning locally at 32B scale.",
+      "input_price": 0.0,
+      "output_price": 0.0,
+      "model": "deepseek-r1:32b",
+      "service": "Self-hosted (Ollama / vLLM)",
+      "api_endpoint": "http://localhost:11434/v1",
+      "used_in": [
+        "Ollama",
+        "vLLM"
+      ]
+    },
+    "deepseek-coder-v2-lite": {
+      "size": "16B MoE (2.4B activated)",
+      "feature": "DeepSeek-Coder-V2-Lite-Instruct is a small Mixture-of-Experts coding model that fits on a single mid-range GPU while retaining much of the larger DeepSeek-Coder-V2's code generation and repository-level understanding.",
+      "input_price": 0.0,
+      "output_price": 0.0,
+      "model": "deepseek-coder-v2:16b",
+      "service": "Self-hosted (Ollama / vLLM)",
+      "api_endpoint": "http://localhost:11434/v1",
+      "used_in": [
+        "Ollama",
+        "vLLM"
+      ]
+    },
+    "code-llama-34b": {
+      "size": "34B",
+      "feature": "Code Llama 34B Instruct is Meta's Llama-2-based coding model, an early but still widely mirrored open-weight option for infilling, completion, and instruction-following code tasks.",
+      "input_price": 0.0,
+      "output_price": 0.0,
+      "model": "codellama:34b",
+      "service": "Self-hosted (Ollama / vLLM)",
+      "api_endpoint": "http://localhost:11434/v1",
+      "used_in": [
+        "Ollama",
+        "vLLM"
+      ]
+    },
+    "llama-3.3-70b": {
+      "size": "70B",
+      "feature": "Llama 3.3 70B Instruct is Meta's general-purpose model that punches above its weight on coding tasks relative to its size, and is a common choice for teams self-hosting a single capable model via vLLM for both chat and code.",
+      "input_price": 0.0,
+      "output_price": 0.0,
+      "model": "llama3.3:70b",
+      "service": "Self-hosted (Ollama / vLLM)",
+      "api_endpoint": "http://localhost:11434/v1",
+      "used_in": [
+        "Ollama",
+        "vLLM"
+      ]
+    },
+    "starcoder2-15b": {
+      "size": "15B",
+      "feature": "StarCoder2-15B, from the BigCode project (Hugging Face, ServiceNow, NVIDIA), was trained on The Stack v2 across 600+ programming languages and remains a common choice for fill-in-the-middle code completion in self-hosted IDE plugins.",
+      "input_price": 0.0,
+      "output_price": 0.0,
+      "model": "starcoder2:15b",
+      "service": "Self-hosted (Ollama / vLLM)",
+      "api_endpoint": "http://localhost:11434/v1",
+      "used_in": [
+        "Ollama",
+        "vLLM",
+        "Tabby"
+      ]
+    },
+    "codegemma-7b": {
+      "size": "7B",
+      "feature": "CodeGemma 7B is Google's Gemma-based coding model, tuned for code completion, generation, and chat, and is a lightweight option for teams already standardized on the Gemma family.",
+      "input_price": 0.0,
+      "output_price": 0.0,
+      "model": "codegemma:7b",
+      "service": "Self-hosted (Ollama / vLLM)",
+      "api_endpoint": "http://localhost:11434/v1",
+      "used_in": [
+        "Ollama",
+        "vLLM"
+      ]
+    },
+    "granite-code-8b": {
+      "size": "8B",
+      "feature": "Granite Code 8B Instruct is IBM's Apache-2.0-licensed coding model, trained with enterprise use in mind (permissive licensing, data provenance documentation), and is a common pick for regulated environments that need a fully self-hosted, auditable model.",
+      "input_price": 0.0,
+      "output_price": 0.0,
+      "model": "granite-code:8b",
+      "service": "Self-hosted (Ollama / vLLM)",
+      "api_endpoint": "http://localhost:11434/v1",
+      "used_in": [
+        "Ollama",
+        "vLLM"
+      ]
+    },
+    "devstral-small-2": {
+      "size": "24B",
+      "feature": "Devstral Small 2 is Mistral AI's open-weight (Apache 2.0) agentic coding model, tuned specifically for software-engineering agents and reporting strong SWE-bench Verified results for its size while still running on a single consumer GPU.",
+      "input_price": 0.0,
+      "output_price": 0.0,
+      "model": "devstral-small:24b",
+      "service": "Self-hosted (Ollama / vLLM)",
+      "api_endpoint": "http://localhost:11434/v1",
+      "used_in": [
+        "Ollama",
+        "vLLM",
+        "opencode (local)"
+      ]
+    },
+    "phi-4": {
+      "size": "14B",
+      "feature": "Phi-4 is Microsoft's small, dense model that punches well above its parameter count on reasoning and coding benchmarks, making it a popular choice for running a capable local assistant on modest (12-16GB) VRAM.",
+      "input_price": 0.0,
+      "output_price": 0.0,
+      "model": "phi4:14b",
+      "service": "Self-hosted (Ollama / vLLM)",
+      "api_endpoint": "http://localhost:11434/v1",
+      "used_in": [
+        "Ollama",
+        "vLLM"
+      ]
+    }
+  }
+}
