@@ -170,6 +170,11 @@ class LocalClassifier:
         """Classify a coding query into one of the predefined routes."""
         llm = self._load()
 
+        # Truncate query to avoid context window limits (e.g., Copilot context)
+        max_len = 4000
+        if len(query) > max_len:
+            query = query[: max_len // 2] + "\n...[truncated]...\n" + query[-max_len // 2 :]
+
         prompt = TASK_INSTRUCTION.format(
             routes=json.dumps(ROUTES),
             conversation=json.dumps([{"role": "user", "content": query}]),

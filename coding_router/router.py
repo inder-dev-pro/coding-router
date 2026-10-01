@@ -389,6 +389,29 @@ class CodingRouter:
                 n_threads=cfg.classifier_n_threads,
             )
 
+        # Start the dashboard server automatically in the background
+        import socket
+        port = 3000
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            in_use = s.connect_ex(('127.0.0.1', port)) == 0
+
+        if not in_use:
+            import subprocess
+            import sys
+            try:
+                subprocess.Popen(
+                    [sys.executable, "-m", "coding_router", "dashboard", "--port", str(port)],
+                    start_new_session=True,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
+                import time
+                time.sleep(0.2)  # brief pause to let it bind
+            except Exception:
+                pass
+
+        print(f"  ✓ Dashboard available at http://127.0.0.1:{port} (or http://localhost:{port})")
+
     def route(
         self,
         query: str,
