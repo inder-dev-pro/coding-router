@@ -292,7 +292,7 @@
       "output_price": 0.0,
       "model": "deepseek-coder-v2:16b",
       "service": "Self-hosted (Ollama / vLLM)",
-      "api_endpoint": "http://localhost:11434/v1",
+      "api_endpoint": "http://localhost:8081",
       "used_in": [
         "Ollama",
         "vLLM"

@@ -162,9 +162,10 @@ def validate_command(arguments: list[str]) -> int:
                 reachable = False
                 if endpoint:
                     try:
-                        url = endpoint.rstrip("/") + "/models"
-                        req = urllib.request.Request(url, method="GET")
+                        req = urllib.request.Request(endpoint, method="GET")
                         urllib.request.urlopen(req, timeout=3)
+                        reachable = True
+                    except urllib.error.HTTPError:
                         reachable = True
                     except Exception:
                         pass
