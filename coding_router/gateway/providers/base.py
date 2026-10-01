@@ -389,6 +389,29 @@ def _build_gemini_contents(req: GatewayRequest) -> list[dict[str, Any]]:
     return contents
 
 
+# Keys that are valid JSON Schema but rejected by Google's Gemini API.
+_GEMINI_UNSUPPORTED_SCHEMA_KEYS = frozenset({
+    "$comment", "$id", "$schema", "$defs", "$ref",
+    "additionalProperties", "patternProperties", "unevaluatedProperties",
+    "if", "then", "else", "allOf", "anyOf", "oneOf", "not",
+    "default", "examples", "const", "title",
+    "deprecated", "readOnly", "writeOnly",
+})
+
+
+def _sanitize_gemini_parameters(schema: Any) -> Any:
+    """Recursively strip JSON Schema fields that Google's Gemini API rejects."""
+    if isinstance(schema, dict):
+        return {
+            k: _sanitize_gemini_parameters(v)
+            for k, v in schema.items()
+            if k not in _GEMINI_UNSUPPORTED_SCHEMA_KEYS
+        }
+    if isinstance(schema, list):
+        return [_sanitize_gemini_parameters(item) for item in schema]
+    return schema
+
+
 async def invoke_google(req: GatewayRequest, profile: ModelProfile) -> GatewayResponse:
     """Non-streaming Google Gemini invocation."""
     import urllib.parse
@@ -413,7 +436,7 @@ async def invoke_google(req: GatewayRequest, profile: ModelProfile) -> GatewayRe
         body["systemInstruction"] = {"parts": [{"text": req.system}]}
     if req.tools:
         body["tools"] = [{"functionDeclarations": [
-            {"name": t.name, "description": t.description, "parameters": t.parameters}
+            {"name": t.name, "description": t.description, "parameters": _sanitize_gemini_parameters(t.parameters)}
             for t in req.tools
         ]}]
 
@@ -486,7 +509,7 @@ async def stream_google(req: GatewayRequest, profile: ModelProfile) -> AsyncIter
         body["systemInstruction"] = {"parts": [{"text": req.system}]}
     if req.tools:
         body["tools"] = [{"functionDeclarations": [
-            {"name": t.name, "description": t.description, "parameters": t.parameters}
+            {"name": t.name, "description": t.description, "parameters": _sanitize_gemini_parameters(t.parameters)}
             for t in req.tools
         ]}]
 
