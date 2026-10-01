@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "coding-router"
-version = "0.2.0"
+version = "0.3.0"
 description = "A lightweight LLM router that classifies coding requests and routes them to the best-fit model using semantic similarity and cost-aware scoring."
 readme = "README.md"
 license = {text = "MIT"}
