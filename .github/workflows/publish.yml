@@ -4,22 +4,21 @@ on:
   push:
     branches:
       - pip-package
-  release:
-    types: [published]
   workflow_dispatch:
 
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
-    
-    # Required for PyPI Trusted Publishing (OIDC) - No secrets needed!
+
     permissions:
       id-token: write
-      contents: read
+      contents: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -30,30 +29,47 @@ jobs:
       - name: Install build dependencies
         run: python -m pip install --upgrade pip build
 
-      - name: Bump package version
+      - name: Bump minor package version
         run: |
           python - <<'PY'
           import re
           from pathlib import Path
 
-          pyproject_path = Path("pyproject.toml")
-          text = pyproject_path.read_text(encoding="utf-8")
-          match = re.search(r'^version\s*=\s*"(\d+(?:\.\d+)*)"$', text, re.MULTILINE)
+          path = Path("pyproject.toml")
+          text = path.read_text(encoding="utf-8")
+
+          match = re.search(
+              r'^version\s*=\s*"(\d+)\.(\d+)\.(\d+)"$',
+              text,
+              re.MULTILINE,
+          )
 
           if not match:
               raise RuntimeError("Unable to find [project].version in pyproject.toml")
 
-          current_version = match.group(1)
-          parts = current_version.split(".")
-          parts[-1] = str(int(parts[-1]) + 1)
-          next_version = ".".join(parts)
+          major, minor, patch = map(int, match.groups())
 
-          pyproject_path.write_text(
-              text.replace(f'version = "{current_version}"', f'version = "{next_version}"', 1),
-              encoding="utf-8",
+          # 0.10.0 -> 0.11.0
+          old_version = f"{major}.{minor}.{patch}"
+          new_version = f"{major}.{minor + 1}.0"
+
+          updated = text.replace(
+              f'version = "{old_version}"',
+              f'version = "{new_version}"',
+              1,
           )
-          print(f"Bumped version: {current_version} -> {next_version}")
+
+          path.write_text(updated, encoding="utf-8")
+          print(f"Bumped version: {old_version} -> {new_version}")
           PY
+
+      - name: Commit version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pyproject.toml
+          git commit -m "chore: bump package version [skip ci]" || exit 0
+          git push
 
       - name: Build package
         run: python -m build
@@ -61,5 +77,4 @@ jobs:
       - name: Publish package to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          skip-existing: true
-        # No password needed when Trusted Publishing is configured on PyPI
+          skip-existing: false
