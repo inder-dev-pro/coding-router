@@ -95,7 +95,7 @@ def _build_openai_body(req: GatewayRequest, model_id: str) -> dict[str, Any]:
         body["stop"] = req.stop
     if req.tools:
         body["tools"] = [
-            {"type": "function", "function": {"name": t.name, "description": t.description, "parameters": t.parameters}}
+            {"type": "function", "function": {"name": t.name, "description": t.description, "parameters": _sanitize_schema(t.parameters, _OPENAI_UNSUPPORTED_SCHEMA_KEYS)}}
             for t in req.tools
         ]
     if req.tool_choice is not None:
@@ -244,7 +244,7 @@ def _build_anthropic_body(req: GatewayRequest, model_id: str) -> dict[str, Any]:
         body["stop_sequences"] = req.stop
     if req.tools:
         body["tools"] = [
-            {"name": t.name, "description": t.description, "input_schema": t.parameters}
+            {"name": t.name, "description": t.description, "input_schema": _sanitize_schema(t.parameters, _ANTHROPIC_UNSUPPORTED_SCHEMA_KEYS)}
             for t in req.tools
         ]
     if req.tool_choice is not None:
@@ -389,7 +389,31 @@ def _build_gemini_contents(req: GatewayRequest) -> list[dict[str, Any]]:
     return contents
 
 
-# Keys that are valid JSON Schema but rejected by Google's Gemini API.
+# ---------------------------------------------------------------------------
+# Tool schema sanitization per provider
+# ---------------------------------------------------------------------------
+# IDEs (Copilot, Cursor, etc.) send tool definitions with full JSON Schema
+# fields that many LLM providers reject. Each provider has a different set
+# of unsupported fields. We strip them recursively before forwarding.
+
+# OpenAI is the most tolerant, but smaller OpenAI-compatible backends
+# (Ollama, vLLM, MLX, DeepSeek, Mistral) can choke on $-prefixed meta keys.
+_OPENAI_UNSUPPORTED_SCHEMA_KEYS = frozenset({
+    "$comment", "$id", "$schema", "$defs", "$ref",
+    "deprecated", "readOnly", "writeOnly",
+    "examples", "const",
+})
+
+# Anthropic rejects many JSON Schema drafts and annotation keywords.
+_ANTHROPIC_UNSUPPORTED_SCHEMA_KEYS = frozenset({
+    "$comment", "$id", "$schema", "$defs", "$ref",
+    "additionalProperties", "patternProperties", "unevaluatedProperties",
+    "if", "then", "else",
+    "default", "examples", "const", "title",
+    "deprecated", "readOnly", "writeOnly",
+})
+
+# Google Gemini is the strictest — rejects almost all non-core keywords.
 _GEMINI_UNSUPPORTED_SCHEMA_KEYS = frozenset({
     "$comment", "$id", "$schema", "$defs", "$ref",
     "additionalProperties", "patternProperties", "unevaluatedProperties",
@@ -399,16 +423,16 @@ _GEMINI_UNSUPPORTED_SCHEMA_KEYS = frozenset({
 })
 
 
-def _sanitize_gemini_parameters(schema: Any) -> Any:
-    """Recursively strip JSON Schema fields that Google's Gemini API rejects."""
+def _sanitize_schema(schema: Any, unsupported_keys: frozenset[str]) -> Any:
+    """Recursively strip JSON Schema fields that a provider rejects."""
     if isinstance(schema, dict):
         return {
-            k: _sanitize_gemini_parameters(v)
+            k: _sanitize_schema(v, unsupported_keys)
             for k, v in schema.items()
-            if k not in _GEMINI_UNSUPPORTED_SCHEMA_KEYS
+            if k not in unsupported_keys
         }
     if isinstance(schema, list):
-        return [_sanitize_gemini_parameters(item) for item in schema]
+        return [_sanitize_schema(item, unsupported_keys) for item in schema]
     return schema
 
 
@@ -436,7 +460,7 @@ async def invoke_google(req: GatewayRequest, profile: ModelProfile) -> GatewayRe
         body["systemInstruction"] = {"parts": [{"text": req.system}]}
     if req.tools:
         body["tools"] = [{"functionDeclarations": [
-            {"name": t.name, "description": t.description, "parameters": _sanitize_gemini_parameters(t.parameters)}
+            {"name": t.name, "description": t.description, "parameters": _sanitize_schema(t.parameters, _GEMINI_UNSUPPORTED_SCHEMA_KEYS)}
             for t in req.tools
         ]}]
 
@@ -509,7 +533,7 @@ async def stream_google(req: GatewayRequest, profile: ModelProfile) -> AsyncIter
         body["systemInstruction"] = {"parts": [{"text": req.system}]}
     if req.tools:
         body["tools"] = [{"functionDeclarations": [
-            {"name": t.name, "description": t.description, "parameters": _sanitize_gemini_parameters(t.parameters)}
+            {"name": t.name, "description": t.description, "parameters": _sanitize_schema(t.parameters, _GEMINI_UNSUPPORTED_SCHEMA_KEYS)}
             for t in req.tools
         ]}]
 
