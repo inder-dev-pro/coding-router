@@ -420,17 +420,30 @@ _GEMINI_UNSUPPORTED_SCHEMA_KEYS = frozenset({
     "if", "then", "else", "allOf", "anyOf", "oneOf", "not",
     "default", "examples", "const", "title",
     "deprecated", "readOnly", "writeOnly",
+    "enumDescriptions", "propertyNames", "exclusiveMinimum", "exclusiveMaximum",
+    "multipleOf", "minLength", "maxLength", "pattern",
+    "minItems", "maxItems", "uniqueItems", "minProperties", "maxProperties",
+    "dependentRequired", "dependentSchemas", "contains",
+    "formatMaximum", "formatMinimum", "formatExclusiveMaximum", "formatExclusiveMinimum",
 })
 
 
 def _sanitize_schema(schema: Any, unsupported_keys: frozenset[str]) -> Any:
     """Recursively strip JSON Schema fields that a provider rejects."""
     if isinstance(schema, dict):
-        return {
-            k: _sanitize_schema(v, unsupported_keys)
-            for k, v in schema.items()
-            if k not in unsupported_keys
-        }
+        new_schema = {}
+        for k, v in schema.items():
+            if k in unsupported_keys:
+                continue
+            if k == "properties" and isinstance(v, dict):
+                # Do not strip property names that happen to match unsupported keys
+                new_schema[k] = {
+                    prop_name: _sanitize_schema(prop_schema, unsupported_keys)
+                    for prop_name, prop_schema in v.items()
+                }
+            else:
+                new_schema[k] = _sanitize_schema(v, unsupported_keys)
+        return new_schema
     if isinstance(schema, list):
         return [_sanitize_schema(item, unsupported_keys) for item in schema]
     return schema
