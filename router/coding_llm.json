@@ -27,5 +27,21 @@
         "Google Antigravity"
       ]
     }
+  },
+  "open_source_self_hosted_models": {
+    "qwen0.5-coder-7b": {
+      "size": "7B",
+      "feature": "Qwen2.5-Coder-7B-Instruct is the lightweight entry point into the Qwen2.5-Coder family, runnable on around 8-10GB VRAM, making it a popular choice for laptop-class local coding assistants and autocomplete.",
+      "input_price": 0.0,
+      "output_price": 0.0,
+      "model": "Qwen/Qwen2.5-Coder-0.5B",
+      "service": "Self-hosted (Ollama / vLLM)",
+      "api_endpoint": "http://localhost:8081/v1",
+      "used_in": [
+        "Ollama",
+        "vLLM",
+        "Continue.dev (local)"
+      ]
+    }
   }
 }
