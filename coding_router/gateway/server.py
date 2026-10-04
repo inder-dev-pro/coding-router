@@ -50,7 +50,42 @@ async def lifespan(app: FastAPI):
 
     # Initialize the router (loads embeddings, classifier, catalog — once)
     log.info("Initializing coding-router...")
-    init_router()
+    
+    from .routing import RouterConfig
+    from pathlib import Path
+    
+    kwargs = {}
+    if "CODING_ROUTER_MODE" in os.environ:
+        kwargs["routing_mode"] = os.environ["CODING_ROUTER_MODE"]
+    if "CODING_ROUTER_ALPHA" in os.environ:
+        kwargs["alpha"] = float(os.environ["CODING_ROUTER_ALPHA"])
+    if "CODING_ROUTER_BETA" in os.environ:
+        kwargs["beta"] = float(os.environ["CODING_ROUTER_BETA"])
+    if "CODING_ROUTER_QUALITY_GAP" in os.environ:
+        kwargs["quality_gap_threshold"] = float(os.environ["CODING_ROUTER_QUALITY_GAP"])
+    if "CODING_ROUTER_CATALOG" in os.environ:
+        kwargs["catalog_path"] = Path(os.environ["CODING_ROUTER_CATALOG"])
+    if "CODING_ROUTER_USER_CATALOG" in os.environ:
+        kwargs["user_catalog_path"] = Path(os.environ["CODING_ROUTER_USER_CATALOG"])
+    if "CODING_ROUTER_POOL" in os.environ:
+        kwargs["candidate_pool"] = os.environ["CODING_ROUTER_POOL"]
+    if "CODING_ROUTER_INDEX" in os.environ:
+        kwargs["index_path"] = Path(os.environ["CODING_ROUTER_INDEX"])
+    if "CODING_ROUTER_EMBEDDING_MODEL" in os.environ:
+        kwargs["embedding_model"] = os.environ["CODING_ROUTER_EMBEDDING_MODEL"]
+    if "CODING_ROUTER_CLASSIFIER_BACKEND" in os.environ:
+        kwargs["classifier_backend"] = os.environ["CODING_ROUTER_CLASSIFIER_BACKEND"]
+    if "CODING_ROUTER_CLASSIFIER_MODEL_PATH" in os.environ:
+        kwargs["classifier_model_path"] = os.environ["CODING_ROUTER_CLASSIFIER_MODEL_PATH"]
+    if "CODING_ROUTER_CLASSIFIER_BASE_URL" in os.environ:
+        kwargs["classifier_base_url"] = os.environ["CODING_ROUTER_CLASSIFIER_BASE_URL"]
+    if "CODING_ROUTER_CLASSIFIER_MODEL" in os.environ:
+        kwargs["classifier_model"] = os.environ["CODING_ROUTER_CLASSIFIER_MODEL"]
+    if "CODING_ROUTER_MAX_OUTPUT_TOKENS" in os.environ:
+        kwargs["target_max_tokens"] = int(os.environ["CODING_ROUTER_MAX_OUTPUT_TOKENS"])
+
+    config = RouterConfig(**kwargs) # type: ignore
+    init_router(config)
     log.info("Router ready. Catalog: %d models.", len(get_profiles()))
 
     yield

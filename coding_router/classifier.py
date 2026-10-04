@@ -171,7 +171,7 @@ class LocalClassifier:
         llm = self._load()
 
         # Truncate query to avoid context window limits (e.g., Copilot context)
-        max_len = 4000
+        max_len = 1500
         if len(query) > max_len:
             query = query[: max_len // 2] + "\n...[truncated]...\n" + query[-max_len // 2 :]
 

@@ -38,7 +38,7 @@ dependencies = [
 gateway = [
     "fastapi>=0.100.0",
     "uvicorn>=0.20.0",
-    "httpx>=0.24.0",
+    "litellm>=1.40.0",
 ]
 dev = [
     "pytest>=7.0",
