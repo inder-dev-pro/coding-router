@@ -1,4 +1,4 @@
-<![CDATA[<div align="center">
+<div align="center">
 
 # coding-router
 
@@ -688,4 +688,3 @@ ruff check coding_router/
 ## License
 
 [MIT](LICENSE) © Inder Sharma
-]]>
