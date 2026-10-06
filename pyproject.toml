@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "coding-router"
-version = "0.4.0"
+version = "0.4.1"
 description = "A lightweight LLM router that classifies coding requests and routes them to the best-fit model using semantic similarity and cost-aware scoring."
 readme = "README.md"
 license = {text = "MIT"}
@@ -48,8 +48,8 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/indersharma/coding-router"
-Repository = "https://github.com/indersharma/coding-router"
+Homepage = "https://github.com/inder-dev-pro/coding-router"
+Repository = "https://github.com/inder-dev-pro/coding-router"
 
 [project.scripts]
 coding-router = "coding_router.__main__:main"
