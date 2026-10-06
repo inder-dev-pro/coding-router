@@ -3,21 +3,15 @@ name: Publish to PyPI
 on:
   push:
     branches:
-      - pip-package
+      - main
   workflow_dispatch:
 
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/pip-package'
+    if: github.ref == 'refs/heads/main'
     environment:
       name: pypi
-    # PyPI Trusted Publisher must match exactly:
-    # - owner: inder-dev-pro
-    # - repository: coding-router
-    # - workflow: .github/workflows/publish.yml
-    # - environment: pypi
-    # Required for PyPI Trusted Publishing (OIDC) - No secrets needed!
     permissions:
       id-token: write
       contents: read
