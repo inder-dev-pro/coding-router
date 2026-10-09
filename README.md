@@ -2,7 +2,7 @@
 
 # coding-router
 
-![Coding Router Demo](screenshot.png)
+![Coding Router Demo](assets/screenshot.png)
 
 **A lightweight LLM router that classifies coding requests and selects the best-fit model using semantic similarity and cost-aware scoring.**
 
