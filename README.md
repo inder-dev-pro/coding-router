@@ -2,6 +2,8 @@
 
 # coding-router
 
+![Coding Router Demo](screenshot.png)
+
 **A lightweight LLM router that classifies coding requests and selects the best-fit model using semantic similarity and cost-aware scoring.**
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
