@@ -78,7 +78,7 @@ data/routerbench_raw_mbpp.csv
 paper/
 evaluation/
 *.pdf
-*.png
+
 *.csv
 
 # Logs and databases
