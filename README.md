@@ -2,13 +2,14 @@
 
 # coding-router
 
-![Coding Router Demo](assets/router-img.png)
-
 **A lightweight LLM router that classifies coding requests and selects the best-fit model using semantic similarity and cost-aware scoring.**
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![PyPI](https://img.shields.io/badge/pypi-coding--router-orange.svg)](https://pypi.org/project/coding-router/)
+
+<br>
+<img src="assets/output.webp" width="720" alt="Demo">
 
 </div>
 
@@ -169,7 +170,7 @@ pip install coding-router[dev]
 ### Platform Notes
 
 | Platform | What happens |
-|---|---|
+| --- | --- |
 | **macOS (Apple Silicon)** | `llama-cpp-python` auto-uses Metal for GPU acceleration |
 | **macOS (Intel)** | CPU-only inference, works fine for the classifier |
 | **Windows** | CPU by default; install `llama-cpp-python` with CUDA support for GPU |
@@ -185,6 +186,7 @@ coding-router init
 ```
 
 This creates:
+
 - `router/coding_llm.json` — model catalog (all models included)
 - `.env.example` — lists the API key env vars you need to set
 
@@ -213,6 +215,7 @@ coding-router validate
 ```
 
 This checks:
+
 - ✓ JSON structure is valid
 - ✓ All required fields are present
 - ✓ Cloud models have their API keys set
@@ -233,7 +236,7 @@ coding-router "Design a caching layer for this API"
 ## CLI Reference
 
 | Command | What it does |
-|---|---|
+| --- | --- |
 | `coding-router init` | Create `router/` dir with catalog + `.env.example` |
 | `coding-router validate` | Check catalog, API keys, and endpoints |
 | `coding-router models` | List all models in the catalog with pricing |
@@ -312,7 +315,7 @@ result = router.route(
 The `route()` method returns a `RouterState` dictionary containing:
 
 | Key | Type | Description |
-|---|---|---|
+| --- | --- | --- |
 | `selected_model` | `dict` | Selected model with all metadata and scores |
 | `classifier_category` | `str` | One of the 5 task categories |
 | `classifier_raw_response` | `str` | Raw classifier output |
@@ -354,13 +357,13 @@ This validates the catalog, API keys, router initialisation, and required depend
 ### Endpoints
 
 | Method | Path | Description |
-|---|---|---|
+| --- | --- | --- |
 | `POST` | `/v1/chat/completions` | OpenAI Chat Completions (streaming + non-streaming) |
 | `POST` | `/v1/responses` | OpenAI Responses API |
 | `POST` | `/v1/messages` | Anthropic Messages API (streaming + non-streaming) |
-| `GET`  | `/v1/models` | List all available models |
-| `GET`  | `/health` | Health check |
-| `GET`  | `/docs` | Interactive Swagger documentation |
+| `GET` | `/v1/models` | List all available models |
+| `GET` | `/health` | Health check |
+| `GET` | `/docs` | Interactive Swagger documentation |
 
 ### Use with any OpenAI SDK client
 
@@ -424,7 +427,7 @@ All routing events are recorded to a local SQLite database at `~/.cache/coding-r
 ### Dashboard API Endpoints
 
 | Path | Description |
-|---|---|
+| --- | --- |
 | `/api/summary` | Overall stats (total requests, unique models, avg latency, total cost) |
 | `/api/events` | Paginated event list with full routing details |
 | `/api/model-distribution` | Model selection frequency breakdown |
@@ -439,7 +442,7 @@ All routing events are recorded to a local SQLite database at `~/.cache/coding-r
 The paper defines five operating points on the performance–cost trade-off curve:
 
 | Mode | α (quality) | β (cost) | Use it when |
-|---|---:|---:|---|
+| --- | ---: | ---: | --- |
 | `skill_based` | 1.0 | 0.0 | Best semantic match regardless of price |
 | `quality_leaning` | 0.8 | 0.2 | Slight cost awareness |
 | `mixed` (default) | 0.6 | 0.4 | Balanced quality/cost decision |
@@ -475,6 +478,7 @@ coding-router --classifier-backend local "your query"
 Auto-starts `llama serve -hf AaryanK/ModelGate:Q8_0` as a background process. The model stays loaded across calls for fast subsequent requests.
 
 Requires `llama.cpp` installed:
+
 ```bash
 brew install llama.cpp  # macOS
 ```
@@ -554,7 +558,7 @@ python -m evaluation.run_mbpp_benchmark --limit 50  # quick test
 ### Evaluation components
 
 | Module | Purpose |
-|---|---|
+| --- | --- |
 | `evaluation/routerbench/loader.py` | Load and preprocess MBPP benchmark data |
 | `evaluation/routerbench/runner.py` | Execute the router against benchmark prompts |
 | `evaluation/routerbench/oracle.py` | Compute oracle (best-possible) model selections |
@@ -579,7 +583,7 @@ The router looks for the model catalog in this order:
 ### Environment variables
 
 | Variable | Purpose |
-|---|---|
+| --- | --- |
 | `LLMROUTER_CONFIG` | Override catalog path (default: `./router/coding_llm.json`) |
 | `CODING_ROUTER_CACHE_DIR` | Override model cache directory (default: `~/.cache/coding-router/`) |
 | `CODING_ROUTER_AUTH` | Enable/disable gateway auth (`true`/`false`) |
@@ -588,7 +592,7 @@ The router looks for the model catalog in this order:
 ### Provider API keys
 
 | Variable | Provider |
-|---|---|
+| --- | --- |
 | `OPENAI_API_KEY` | OpenAI |
 | `ANTHROPIC_API_KEY` | Anthropic |
 | `GEMINI_API_KEY` or `GOOGLE_API_KEY` | Google |
